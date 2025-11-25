@@ -1,8 +1,8 @@
 'use client';
 import React from "react";
-import Image from "next/image";
+// import Image from "next/image";
 import { Box, Button, Typography } from "@mui/material";
-import sidebarBuynowsvg from "public/images/backgrounds/sidebar-buynow-bg.svg";
+// import sidebarBuynowsvg from "public/images/backgrounds/sidebar-buynow-bg.svg";
 
 const Upgrade = () => (
   <Box pb={0} mt={5}>
@@ -17,11 +17,11 @@ const Upgrade = () => (
         overflow: "hidden",
       }}
     >
-      <Image
+      {/* <Image
         src={sidebarBuynowsvg}
         alt={sidebarBuynowsvg}
         className="buyNowImg"
-      />
+      /> */}
       <Box pb={3} pt={3}>
         <Typography variant="h6" fontWeight="700" mb={2}>
           Get This for Free

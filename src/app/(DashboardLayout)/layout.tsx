@@ -1,9 +1,14 @@
 "use client";
-import { styled, Container, Box,useTheme } from "@mui/material";
+import { styled, Container, Box, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import Header from "@/app/(DashboardLayout)/layout/header/Header";
+import CartDrawer from "@/app/(DashboardLayout)/layout/header/CartDrawer";
 import Sidebar from "@/app/(DashboardLayout)/layout/sidebar/Sidebar";
 import Footer from "./layout/footer/page";
+import AuthGuard from "@/components/auth/AuthGuard";
+import { ThemeProvider } from '@mui/material/styles';
+import { darkTheme } from '@/theme/darkTheme';
+import { CartProvider } from '@/contexts/CartContext';
 
 const MainWrapper = styled("div")(() => ({
   // display: "flex",
@@ -35,57 +40,63 @@ export default function RootLayout({
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const theme = useTheme();
   return (
-    <MainWrapper className="mainwrapper">
+    <ThemeProvider theme={darkTheme}>
+      <AuthGuard>
+        <CartProvider>
+          <MainWrapper className="mainwrapper">
 
-      {/* ------------------------------------------- */}
-      {/* Header */}
-      {/* ------------------------------------------- */}
-      <Header toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
+            {/* ------------------------------------------- */}
+            {/* Header */}
+            {/* ------------------------------------------- */}
+            <Header toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
+            <CartDrawer />
 
+            {/* ------------------------------------------- */}
+            {/* page Wrapper */}
+            {/* ------------------------------------------- */}
+            <PageWrapper className="page-wrapper"
+              sx={{
+                [theme.breakpoints.up("lg")]: {
+                  ml: `270px`,
+                },
+              }}
+            >
 
-      {/* ------------------------------------------- */}
-      {/* page Wrapper */}
-      {/* ------------------------------------------- */}
-      <PageWrapper className="page-wrapper"
-          sx={{
-              [theme.breakpoints.up("lg")]: {
-                ml: `270px`,
-              },
-          }}
-      >
+              {/* ------------------------------------------- */}
+              {/* Sidebar */}
+              {/* ------------------------------------------- */}
+              <Sidebar
+                isSidebarOpen={isSidebarOpen}
+                isMobileSidebarOpen={isMobileSidebarOpen}
+                onSidebarClose={() => setMobileSidebarOpen(false)}
+              />
 
-        {/* ------------------------------------------- */}
-        {/* Sidebar */}
-        {/* ------------------------------------------- */}
-        <Sidebar
-          isSidebarOpen={isSidebarOpen}
-          isMobileSidebarOpen={isMobileSidebarOpen}
-          onSidebarClose={() => setMobileSidebarOpen(false)}
-        />
+              {/* ------------------------------------------- */}
+              {/* PageContent */}
+              {/* ------------------------------------------- */}
+              <Container
+                sx={{
+                  paddingTop: "20px",
+                  maxWidth: "1200px",
+                }}
+              >
+                {/* ------------------------------------------- */}
+                {/* Page Route */}
+                {/* ------------------------------------------- */}
+                <Box mt={4} sx={{ minHeight: "calc(100vh - 170px)" }}>{children}</Box>
+                {/* ------------------------------------------- */}
+                {/* End Page */}
+                {/* ------------------------------------------- */}
 
-        {/* ------------------------------------------- */}
-        {/* PageContent */}
-        {/* ------------------------------------------- */}
-        <Container
-          sx={{
-            paddingTop: "20px",
-            maxWidth: "1200px",
-          }}
-        >
-          {/* ------------------------------------------- */}
-          {/* Page Route */}
-          {/* ------------------------------------------- */}
-          <Box mt={4} sx={{ minHeight: "calc(100vh - 170px)" }}>{children}</Box>
-          {/* ------------------------------------------- */}
-          {/* End Page */}
-          {/* ------------------------------------------- */}
-
-          {/* ------------------------------------------- */}
-          {/* Footer */}
-          {/* ------------------------------------------- */}
-          <Footer />
-        </Container>
-      </PageWrapper>
-    </MainWrapper>
+                {/* ------------------------------------------- */}
+                {/* Footer */}
+                {/* ------------------------------------------- */}
+                <Footer />
+              </Container>
+            </PageWrapper>
+          </MainWrapper>
+        </CartProvider>
+      </AuthGuard>
+    </ThemeProvider>
   );
 }

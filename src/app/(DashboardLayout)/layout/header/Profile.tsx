@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import Link from "next/link";
@@ -13,32 +15,34 @@ import {
   List,
   ListItemText,
 } from "@mui/material";
-
-import { Stack } from "@mui/system";
-import {
-  IconChevronDown,
-  IconCreditCard,
-  IconCurrencyDollar,
-  IconMail,
-  IconShield,
-} from "@tabler/icons-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 const Profile = () => {
+  const { user, signOut } = useAuth();
+  const router = useRouter();
   const [anchorEl2, setAnchorEl2] = useState(null);
+
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
   };
+
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      handleClose2();
+      router.push('/auth/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   const theme = useTheme();
-  const primary = theme.palette.primary.main;
-  const primarylight = theme.palette.primary.light;
-  const error = theme.palette.error.main;
-  const errorlight = theme.palette.error.light;
-  const success = theme.palette.success.main;
-  const successlight = theme.palette.success.light;
+
   return (
     <Box>
       <IconButton
@@ -55,16 +59,17 @@ const Profile = () => {
         onClick={handleClick2}
       >
         <Avatar
-          src={"/images/users/user2.jpg"}
-          alt={"ProfileImg"}
+          src={user?.photoURL || "/images/users/user2.jpg"}
+          alt={user?.displayName || "User"}
           sx={{
             width: 35,
             height: 35,
           }}
         />
       </IconButton>
+
       {/* ------------------------------------------- */}
-      {/* Message Dropdown */}
+      {/* Profile Dropdown */}
       {/* ------------------------------------------- */}
       <Menu
         id="msgs-menu"
@@ -79,36 +84,47 @@ const Profile = () => {
             width: "360px",
             p: 2,
             pb: 2,
-            pt:0
+            pt: 0
           },
         }}
       >
+        <Box pt={2}>
+          <Typography variant="h6" fontWeight={600}>
+            {user?.displayName || 'Usuario'}
+          </Typography>
+          <Typography variant="caption" color="textSecondary">
+            {user?.email || ''}
+          </Typography>
+        </Box>
+
+        <Divider sx={{ my: 2 }} />
 
         <Box pt={0}>
-
           <List>
-            <ListItemButton component="a" href="#">
-              <ListItemText primary="My Profile" />
+            <ListItemButton component={Link} href="/auth/register">
+              <ListItemText primary="Mi Perfil" />
             </ListItemButton>
             <ListItemButton component="a" href="#">
-              <ListItemText primary="My Account" />
+              <ListItemText primary="Mi Cuenta" />
             </ListItemButton>
             <ListItemButton component="a" href="#">
-              <ListItemText primary="Change Password" />
-            </ListItemButton>
-            <ListItemButton component="a" href="#">
-              <ListItemText primary="My Task" />
+              <ListItemText primary="Cambiar Contraseña" />
             </ListItemButton>
           </List>
-
         </Box>
+
         <Divider />
+
         <Box mt={2}>
-          <Button fullWidth variant="contained" color="primary">
-            Logout
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleLogout}
+          >
+            Cerrar Sesión
           </Button>
         </Box>
-
       </Menu>
     </Box>
   );

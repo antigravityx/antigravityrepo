@@ -1,12 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyB-R13v-FAZTH0pkrOPdXs0ZyVaGcpUvcE",
   authDomain: "webappred.firebaseapp.com",
@@ -17,18 +14,23 @@ const firebaseConfig = {
   measurementId: "G-PTR4W06Y36"
 };
 
-// Initialize Firebase (singleton pattern to avoid multiple instances)
+// Initialize Firebase (singleton pattern)
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 // Initialize Firebase services
 const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
 
-// Analytics (only in browser)
-let analytics;
-if (typeof window !== 'undefined') {
-  analytics = getAnalytics(app);
+// Initialize Firestore with offline persistence
+let db: ReturnType<typeof getFirestore>;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+      tabManager: persistentMultipleTabManager()
+    })
+  });
+} catch (error) {
+  // If already initialized, get the existing instance
+  db = getFirestore(app);
 }
 
-export { app, auth, db, storage, analytics };
+export { app, auth, db };

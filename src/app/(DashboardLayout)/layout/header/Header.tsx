@@ -5,18 +5,20 @@ import Logo from "../shared/logo/Logo";
 // components
 import Profile from './Profile';
 import Search from './Search';
-import { IconMenu2 } from '@tabler/icons-react';
+import { IconMenu2, IconShoppingCart } from '@tabler/icons-react';
+import { useCart } from '@/contexts/CartContext';
 
 interface ItemType {
   toggleMobileSidebar: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
 const Header = ({ toggleMobileSidebar }: ItemType) => {
+  const { totalItems, totalPrice, toggleCart } = useCart();
 
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow:
       "rgba(0, 0, 0, 0.2) 0px 3px 5px -1px, rgba(0, 0, 0, 0.14) 0px 5px 8px 0px, rgba(0, 0, 0, 0.12) 0px 1px 14px 0px !important;",
-    background: theme.palette.primary.main,
+    background: '#222', // Dark background
     justifyContent: "center",
     backdropFilter: "blur(4px)",
     [theme.breakpoints.up('lg')]: {
@@ -36,8 +38,8 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
         {/* Logo */}
         {/* ------------------------------------------- */}
         <Box sx={{
-            width: '256px',
-          }}>
+          width: '256px',
+        }}>
           <Logo />
         </Box>
 
@@ -46,7 +48,7 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
           aria-label="menu"
           onClick={toggleMobileSidebar}
           sx={{
-            color:'#fff',
+            color: '#fff',
             display: {
               lg: "none",
               xs: "flex",
@@ -60,6 +62,14 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
 
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
+          <Button
+            color="inherit"
+            startIcon={<Badge badgeContent={totalItems} color="error"><IconShoppingCart /></Badge>}
+            sx={{ color: '#fff', mr: 2 }}
+            onClick={toggleCart}
+          >
+            ${totalPrice.toFixed(2)}
+          </Button>
           <Profile />
         </Stack>
       </ToolbarStyled>
