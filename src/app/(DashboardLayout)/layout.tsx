@@ -2,7 +2,11 @@
 import { styled, Container, Box, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import Header from "@/app/(DashboardLayout)/layout/header/Header";
-import CartDrawer from "@/app/(DashboardLayout)/layout/header/CartDrawer";
+import dynamic from 'next/dynamic';
+
+const CartDrawer = dynamic(() => import('@/app/(DashboardLayout)/layout/header/CartDrawer'), {
+  ssr: false,
+});
 import Sidebar from "@/app/(DashboardLayout)/layout/sidebar/Sidebar";
 import Footer from "./layout/footer/page";
 import AuthGuard from "@/components/auth/AuthGuard";

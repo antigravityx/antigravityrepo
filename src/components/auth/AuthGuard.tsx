@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Box, CircularProgress } from '@mui/material';
+import { isProfileCompleteSync } from '@/lib/firestore/users';
 
 interface AuthGuardProps {
     children: React.ReactNode;
@@ -12,13 +13,25 @@ interface AuthGuardProps {
 export default function AuthGuard({ children }: AuthGuardProps) {
     const { user, loading } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
 
     useEffect(() => {
-        if (!loading && !user) {
-            // User is not authenticated, redirect to login
-            router.push('/auth/login');
+        if (!loading) {
+            if (!user) {
+                // User is not authenticated, redirect to login
+                // But if we are on register page, allow it (for fusion flow)
+                if (pathname !== '/auth/register' && pathname !== '/auth/login') {
+                    router.push('/auth/register');
+                }
+            } else {
+                // User is authenticated, check if profile is complete
+                const isComplete = isProfileCompleteSync(user);
+                if (!isComplete && pathname !== '/auth/register') {
+                    router.push('/auth/register');
+                }
+            }
         }
-    }, [user, loading, router]);
+    }, [user, loading, router, pathname]);
 
     // Show loading while checking auth
     if (loading) {
@@ -36,11 +49,12 @@ export default function AuthGuard({ children }: AuthGuardProps) {
         );
     }
 
-    // If not authenticated, don't render children (will redirect)
-    if (!user) {
+    // If not authenticated and not on public pages, don't render children
+    // But since we redirect, returning null is fine.
+    // However, for the register page, we WANT to render children even if not authenticated (or partially authenticated)
+    if (!user && pathname !== '/auth/register' && pathname !== '/auth/login') {
         return null;
     }
 
-    // User is authenticated, render children
     return <>{children}</>;
 }

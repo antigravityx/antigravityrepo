@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, CardContent, Typography, Grid, Button, Box, CardMedia, Stack } from '@mui/material';
+import { Card, CardContent, Typography, Grid, Button, Box, Stack } from '@mui/material';
+import Image from 'next/image';
 import DashboardCard from '../shared/DashboardCard';
 import { useCart } from '@/contexts/CartContext';
 
@@ -35,14 +36,18 @@ const ProductGallery = () => {
             <Grid container spacing={3}>
                 {products.map((product) => (
                     <Grid item xs={12} sm={6} md={4} key={product.id}>
+
+
                         <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: 'background.paper' }}>
-                            <CardMedia
-                                component="img"
-                                height="250"
-                                image={product.image}
-                                alt={product.title}
-                                sx={{ objectFit: 'cover' }}
-                            />
+                            <Box sx={{ position: 'relative', width: '100%', height: '250px' }}>
+                                <Image
+                                    src={product.image}
+                                    alt={product.title}
+                                    fill
+                                    style={{ objectFit: 'cover' }}
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                            </Box>
                             <CardContent sx={{ flexGrow: 1 }}>
                                 <Typography gutterBottom variant="h5" component="div" fontWeight="bold">
                                     {product.title}

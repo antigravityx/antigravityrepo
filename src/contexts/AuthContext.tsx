@@ -93,6 +93,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         loading,
         signInWithGoogle,
+        signInAnonymously: async () => {
+            try {
+                const { signInAnonymously: firebaseSignInAnonymously } = await import('firebase/auth');
+                const result = await firebaseSignInAnonymously(auth);
+                await refreshUserProfile(result.user);
+            } catch (error) {
+                console.error('Error signing in anonymously:', error);
+                throw error;
+            }
+        },
         signOut,
         refreshUserProfile: async () => {
             if (auth.currentUser) {

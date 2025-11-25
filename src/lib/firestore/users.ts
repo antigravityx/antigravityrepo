@@ -60,7 +60,7 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     try {
         const userSnap = await withTimeout(
             getDoc(userRef),
-            'Timeout fetching user profile. Check your connection.'
+            'Timeout fetching user profile. If you are using an Ad Blocker, please disable it for this site.'
         );
 
         if (userSnap.exists()) {
@@ -98,6 +98,22 @@ export async function updateUserProfile(
 export async function isProfileComplete(uid: string): Promise<boolean> {
     const profile = await getUserProfile(uid);
 
+    if (!profile) return false;
+
+    return !!(
+        profile.displayName &&
+        profile.shippingAddress?.street &&
+        profile.shippingAddress?.city &&
+        profile.shippingAddress?.state &&
+        profile.shippingAddress?.country &&
+        profile.shippingAddress?.coordinates
+    );
+}
+
+/**
+ * Check if user profile is complete (Synchronous)
+ */
+export function isProfileCompleteSync(profile: UserProfile | null): boolean {
     if (!profile) return false;
 
     return !!(

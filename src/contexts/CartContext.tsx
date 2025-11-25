@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useMemo } from 'react';
 
 export interface CartItem {
   id: number;
@@ -47,7 +47,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [items, isLoaded]);
 
-  const addToCart = (product: any) => {
+  const addToCart = useCallback((product: any) => {
     setItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
 
@@ -66,9 +66,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return [...prevItems, { ...product, price: priceValue, quantity: 1 }];
     });
     setIsCartOpen(true); // Open cart when adding item
-  };
+  }, []);
 
-  const decreaseQuantity = (id: number) => {
+  const decreaseQuantity = useCallback((id: number) => {
     setItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === id);
       if (existingItem && existingItem.quantity > 1) {
@@ -80,35 +80,37 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
       return prevItems.filter((item) => item.id !== id); // Remove if quantity becomes 0
     });
-  };
+  }, []);
 
-  const removeFromCart = (id: number) => {
+  const removeFromCart = useCallback((id: number) => {
     setItems((prevItems) => prevItems.filter((item) => item.id !== id));
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setItems([]);
-  };
+  }, []);
 
-  const toggleCart = () => {
+  const toggleCart = useCallback(() => {
     setIsCartOpen((prev) => !prev);
-  };
+  }, []);
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const totalItems = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items]);
+  const totalPrice = useMemo(() => items.reduce((sum, item) => sum + (item.price * item.quantity), 0), [items]);
+
+  const value = useMemo(() => ({
+    items,
+    addToCart,
+    removeFromCart,
+    decreaseQuantity,
+    clearCart,
+    totalItems,
+    totalPrice,
+    isCartOpen,
+    toggleCart
+  }), [items, addToCart, removeFromCart, decreaseQuantity, clearCart, totalItems, totalPrice, isCartOpen, toggleCart]);
 
   return (
-    <CartContext.Provider value={{
-      items,
-      addToCart,
-      removeFromCart,
-      decreaseQuantity,
-      clearCart,
-      totalItems,
-      totalPrice,
-      isCartOpen,
-      toggleCart
-    }}>
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );

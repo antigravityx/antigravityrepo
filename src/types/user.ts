@@ -24,6 +24,7 @@ export interface AuthContextType {
     user: UserProfile | null;
     loading: boolean;
     signInWithGoogle: () => Promise<void>;
+    signInAnonymously: () => Promise<void>;
     signOut: () => Promise<void>;
     refreshUserProfile: () => Promise<void>;
 }
