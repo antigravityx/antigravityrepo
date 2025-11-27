@@ -1,0 +1,250 @@
+En este video vamos a ver la ruta para ser un programador de inteligencia artificial,
+esto enfocado en el aprendizaje automático o machine learning y también la ciencia de los datos.
+Esta área de la tecnología es la más bangleardista hoy en día,
+con oportunidades laborales realmente competitivas.
+Hola, mi nombre es Javi y esto es programador X.
+He trabajado en proyectos para Google,
+he trabajado como ingeniero de software en Amazon,
+trabajé cuatro años y medio en una consultoria de software,
+robótica e inteligencia artificial,
+y fue inventor de personas que trabajaron directamente en proyectos de inteligencia artificial.
+Antes de empezar te invito a suscribirte,
+ya que de acuerdo a las analíticas de YouTube,
+solo el 24% de personas que visitan este canal frecuentemente están suscritas.
+Así que agradezco mucho tu apoyo,
+y a que son me permites sacar mejores videos cada vez para ti.
+Antes de explicarte esta ruta,
+quiero que sepas que la inteligencia artificial es un campo inmenso.
+Tú te puedes especializar en muchísimas áreas,
+por ejemplo, el área de aprendizaje automático,
+una aplicación del mundo real es el algoritmo de YouTube,
+que te sugiera diferentes videos,
+asado en lo que tú has consumido y tus intereses.
+También está el área del procesamiento del lenguaje natural o NLP.
+Aquí tienes la traducción automática de lenguajes,
+también asistentes de bosco malexa,
+y también los GPs que están de moda hoy en día,
+Mochad GPs y Gemini.
+También tienes la visión por computadora o computer vision,
+que es el reconocimiento de imágenes.
+Por ejemplo, como tu iPhone reconoce tu rostro,
+reconocimiento de rostros en Facebook,
+y también reconocimiento de objetos por vehículos autónomos.
+También tenemos el área de la robótica,
+como este robot que ayuda a mantener mi casa limpia,
+tiene cirugía asistida por robots en hospitales,
+y también bastante es algoritmos utilizados en drones.
+Y por supuesto hay muchas otras áreas especializadas,
+que puedes explorar un poco más por tu cuenta,
+pero tenemos que empezar por lo básico y después te puedes especializar,
+y así encontrar diferentes oportunidades profesionales,
+recuerda que en este momento estamos en la cuarta revolución industrial,
+todos los negocios en el mundo,
+están adoptando transformaciones significativas,
+gracias a la inteligencia artificial,
+ya que estamos en un momento de la historia,
+en el que tenemos el poder computacional y la suficiente cantidad de datos,
+para crear aplicaciones que no han existido antes.
+Por ejemplo, imágenes generativas.
+Y hoy en día, hay cada vez más herramientas
+que nunca han existido en la historia de la humanidad,
+Mochad GPs para interpretación de texto y generación de texto,
+herramientas como Dali y stable diffusion,
+para interpretar el lenguaje natural,
+y representar estas ideas en imágenes a través de arte generativo,
+y debes haber escuchado últimamente de Sora,
+que es otra tecnología de OpenAI,
+que permite generar video a partir de texto,
+como puedes imaginar, esto solo es el comienzo,
+y tú puedes participar y ser parte de este campo,
+convirtiéndote en un profesional de inteligencia artificial.
+Así que lo primero que necesitas es aprender a programar,
+y necesitas un lenguaje de programación enfocado en la inteligencia artificial,
+el lenguaje de programación número uno para esto es Python,
+ya que Python ha sido utilizado en el área académica por bastantes años,
+así que tiene muchísimas bibliotecas, herramientas y frameworks
+que están diseñadas para trabajar con inteligencia artificial.
+Para aprender Python, vas a tener que aprender sobre variables y tipos de datos,
+condicionales, ucles, funciones,
+incluso la programación orientada a los objetos y mejores prácticas.
+De paso, puedes aprender Python conmigo,
+y si deseas aprender más sobre informática, computación y desarrollo web,
+te invito a visitar mis cursos de programación en academia.x.com,
+en donde comparto todos los conocimientos
+para crear páginas web, aplicaciones y prepararte para entrevistas.
+Estos son los mismos conocimientos que me permitieron trabajar en proyectos
+para Google Nintendo y como el genero en Amazon.
+Y tengo un curso de Python enfocado en programación web
+que va a ser una excelente experiencia para crecer en este campo.
+Además, mis cursos incluyen libros, incluyen retos de programación,
+incluyen una comunidad, soporte de 24 horas y también diplomas.
+Así que espero que tenéisme se estudiar conmigo.
+Ahora, una vez que aprendas Python,
+lo siguiente que tienes que aprender es un lenguaje de bases de datos.
+¿Por qué?
+Porque todos los datos con los que vas a trabajar van a existir en bases de datos.
+Para esto, te recomiendo SQL.
+SQL es un lenguaje de consultas que te va a permitir obtener todos los datos que necesitas de una base de datos.
+Además, al trabajar en inteligencia artificial,
+vas a tener que saber sobre algoritmos.
+Porque la inteligencia artificial se basa en permitir que una máquina construya sus propios algoritmos.
+Así que aquí si te recomiendo que aprendas lo básico sobre algoritmos
+y tal vez algunos de los algoritmos más populares.
+Por ejemplo, algoritmos de búsqueda, de ordenamiento,
+de encontrar el camino más corto,
+y también te invito a mi Academia,
+tengo un curso de SQL y un curso de algoritmos.
+Ahora que ya has cubierto la parte de programación,
+necesitas aprender conceptos más especializados,
+y aquí viene la parte un poco más pesada y enfocada en matemáticas.
+Y no te preocupes, no tienes que ser un genio de las matemáticas,
+pero si necesitas ser una persona que tiene gusto por las matemáticas,
+aquí vas a tener que aprender cálculo, álgebra y estadística.
+Si es que hay dos conceptos que son importantes en estas áreas,
+son las derivativas y también las matrices.
+¿Por qué eso sí se utiliza bastante?
+Para el resto tienes chat GPT,
+así que siempre puede seguir aprendiendo durante el trabajo.
+Dependiendo de si ha sido la universidad o no,
+esto sí te puede tomar algo de tiempo y puede ser algo un poco más pesado.
+Así que enfócate en álgebra lineal, cálculo y análisis matemático.
+También en el cálculo diferencial.
+Ahora en el área de estadística,
+necesitas estudiar estadística,
+probabilidades amplieo, pruebas A y B y sensibilidad de métricas.
+Yo sé que esto suena tal vez algo avanzado,
+pero cuando preguntas a chat GPT que te explique como un niño
+y le has un par de blogs,
+vas a ver que no es tan complicado.
+Ahora también tienes que aprender sobre visualización de datos,
+porque la mejor forma de comunicar datos es de manera visual.
+Y tienes que aprender unas tres bibliotecas que son bastante útiles aquí.
+La primera es Jupyter.
+Jupyter es más como una aplicación en donde tú puedes compartir diferente código,
+vas a tener ecuaciones, visualizaciones
+y también texto.
+Y la idea es que tú utilices Python aquí para poder correr código de inteligencia artificial
+y así evaluar los resultados ahí mismo.
+Otra biblioteca importante es Pandas.
+Y Pandas te permite hacer análisis y procesamiento de datos
+en un formato que es mucho más flexible que son tablas,
+es decir, datos tabulares.
+Finalmente aprende la biblioteca MatplotLab.
+Y también es una biblioteca para Python.
+Y éste te permite crear gráficos y visualizaciones.
+Ahora puedes darte cuenta que con estas tres bibliotecas,
+vas a poder hacer exploración, análisis y visualización de datos utilizando Python.
+Y así vas a probar distintos resultados.
+Ahora solo hemos hablado básicamente de la parte teórica,
+pero ya hasta este punto ya tenemos suficientes conocimientos para crear algunos proyectos.
+Estos van a ser tus primeros proyectos de inteligencia artificial.
+Por ejemplo, puedes obtener bastantes datos en línea
+de cualquier tema que te interese y hacer una exploración y visualización de esos datos.
+Como por ejemplo, obtener datos del costo de todas las viviendas en tu ciudad
+y crear un modelo de predicción de viviendas a futuro.
+Otro proyecto puede ser un proyecto de clasificación de imágenes.
+Puedes crear un modelo de predicción de imágenes
+y alimentar al sistema con nuevas imágenes
+y ver si el sistema puede identificar a las personas en las imágenes
+o diferentes objetos en las imágenes.
+También podrías crear un recomendador de películas.
+Por ejemplo, obtener una base de datos de películas,
+también calificaciones de estas películas
+e información de diferentes usuarios,
+y con todo esto crear un modelo de recomendación de películas a diferentes usuarios.
+O podrías obtener datos climáticos
+y hacer predicciones del clima en un futuro.
+Y claro, estos son solo proyectos iniciales,
+pero ya cuando trabajas más a profundidad en la ciencia de los datos,
+vas a necesitar trabajar con frameworks más avanzados.
+Así que después vas a aprender bibliotecas y frameworks
+especializados en el aprendizaje automático.
+Una de las más populares es Scikit Learn.
+Este es una biblioteca que te ofrece una variedad de algoritmos
+que ya están listos y viene con herramientas de preprocesamiento de datos,
+también algoritmos de aprendizaje supervisado y no supervisado
+y algoritmos clásicos como regresión lineal,
+regresión logística, SBM, árboles de decisión,
+y otros que ya vienen directamente en la biblioteca.
+Ahora otra biblioteca súper importante, Spy Torch,
+que es una biblioteca desarrollada por Facebook.
+También es enfocada en el aprendizaje profundo
+y realmente brinda una de las mejores experiencias,
+haciendo que puedas experimentar fácilmente
+y también desarrollar prototipos rápidamente.
+Ahora otra biblioteca súper importante, Stensworth Flow.
+Stensworth Flow fue desarrollado por Google Brain
+y es enfocada en el aprendizaje automático
+y el aprendizaje profundo o deep learning.
+Es flexible, escalable, eficiente,
+y te da las herramientas suficientes para construir, entrenar,
+y también publicar modelos de inteligencia artificial.
+Esto en diferentes tipos de plataformas con distintos CPUs y GPUs.
+Porque debes saber que en el mundo de entrenamiento de modelos
+vas a necesitar GPUs más avanzados.
+Estas son tarjetas de gráficos avanzadas
+que permiten realizar operaciones de matrices
+de manera mucho más eficiente
+y así entrenar un modelo no te va a tomar una eternidad.
+Con esto vas a poder entrenar modelos
+con redes neuronales convolucionales,
+también redes neuronales recurrentes
+y redes neuronales generativas.
+Cuando escuchas la palabra generativa,
+ya podéis imaginar la generación de imágenes,
+de video, de audio.
+Y este es un área que a mí me interesaba bastante
+antes de la inteligencia artificial.
+Yo con la programación logré generar 100 álbumes musicales.
+Mucho antes de esta explosión de la inteligencia artificial
+fue uno de mis proyectos más ambiciosos
+y estoy seguro que tú vas a poder crear proyectos
+incluso más ambiciosos.
+Ahora la aprender algoritmos va a ser importante
+aprender la diferencia entre algoritmos de inteligencia artificial.
+Por ejemplo el aprendizaje supervisado,
+aprendizaje semi supervisado,
+aprendizaje no supervisado
+y aprendizaje de refuerzo.
+Y van a existir bastantes algoritmos en cada uno de ellos.
+Se escogen para diferentes tipos de aplicaciones.
+Ahora si quieres practicar bastantes desafíos,
+hay una plataforma que se llama Kaggle,
+que es realmente popular,
+vas a encontrar diferentes desafíos ahí,
+vas a encontrar competencias,
+vas a poder trabajar con distintos tipos de datos,
+también ofrecen cursos y tutoriales y también tienen foros.
+En donde puedes encontrar distintas personas con quienes trabajar,
+y también vas a poder correr y compartir tu código de Python ahí.
+Por supuesto, existen muchos más tutoriales en línea,
+hay una especialización de Machine Learning en Coursera
+que también puedes visitar es un curso un poco más avanzado,
+pero vas a aprender muchísimo de Machine Learning.
+Y cuando llegues a este punto es un buen punto
+para hacer un proyecto mucho más avanzado para tu portafolio.
+Los proyectos más avanzados que vas a encontrar,
+esta vez encontrar un paper,
+que es una publicación científica y tratar de reproducir
+esa publicación científica por cuenta propia.
+Estos son proyectos avanzados,
+pero esos son los que te lanzan a mayores oportunidades
+en compañías grandes,
+compañías de tecnología que te van a poder pagar los mejores salarios.
+Y también cuando quieras desplegar estos modelos al público,
+vas a tener que aprender sobre servicios en la nube.
+Uno de los más populares hoy en día es AWS,
+la Mietniz Asher, Tienes Google Cloud,
+y yo estoy en proceso de terminar un curso de AWS,
+Amy Academia de Programación, Academy of X,
+el resto es buscar oportunidades en el campo laboral,
+pero con esto ya vas a tener una buena fundación
+para ingresar en el campo de la inteligencia artificial,
+el aprendizaje automático, Machine Learning,
+y las ciencias de los datos,
+porque este campo recién se está iniciando
+en su máximo potencial y tiene muchos años por venir.
+Si te gustó este video, dale un like y te dejo este otro video
+que confío que te va a gustar.
+Y ahora, si te gustó este video,
+si te gustó este video, si te gustó este video,

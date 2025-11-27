@@ -1,16 +1,43 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import {
-    GoogleAuthProvider,
-    signInWithPopup,
-    signOut as firebaseSignOut,
-    onAuthStateChanged,
-    User as FirebaseUser,
-} from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { getUserProfile, createUserProfile } from '@/lib/firestore/users';
-import { UserProfile, AuthContextType } from '@/types/user';
+// VerixRichon Auth Context (Replaces Firebase Auth)
+// Firmado por: VerixRichon Software Factory
+// "Build what we need, own what we build"
+
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { verixAuth, VerixUser } from '@/lib/verixrichon-auth';
+
+// Types for backward compatibility
+export interface UserProfile extends VerixUser {
+    uid: string; // Alias for id - Mandatory
+    shippingAddress?: {
+        street: string;
+        city: string;
+        state: string;
+        country: string;
+        postalCode?: string;
+        coordinates?: {
+            lat: number;
+            lng: number;
+        };
+    };
+    createdAt: any;
+    updatedAt: any;
+}
+
+export interface AuthContextType {
+    user: UserProfile | null;
+    loading: boolean;
+    signInWithGoogle?: () => Promise<void>; // Deprecated, kept for compatibility
+    signInAnonymously?: () => Promise<void>; // Deprecated, kept for compatibility
+    signOut: () => Promise<void>;
+    refreshUserProfile?: () => Promise<void>;
+    // New VerixRichon methods
+    signIn?: (username: string, password: string) => Promise<void>;
+    signUp?: (username: string, password: string, displayName: string, email?: string) => Promise<void>;
+    signInAsGuest?: () => Promise<void>;
+    updateUserProfile?: (updates: Partial<VerixUser>) => Promise<void>;
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -18,100 +45,96 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const refreshUserProfile = async (firebaseUser: FirebaseUser) => {
+    // Check for existing session on mount
+    useEffect(() => {
+        const currentUser = verixAuth.getCurrentUser();
+        if (currentUser) {
+            setUser({ ...currentUser, uid: currentUser.id, createdAt: currentUser.createdAt, updatedAt: currentUser.lastLogin }); // Add uid alias
+            console.log('[VerixRichon] Session restored:', currentUser.displayName);
+        }
+        setLoading(false);
+    }, []);
+
+    const signIn = async (username: string, password: string) => {
         try {
-            let profile = await getUserProfile(firebaseUser.uid);
-
-            // If profile doesn't exist, create a basic one
-            if (!profile) {
-                await createUserProfile(firebaseUser.uid, {
-                    uid: firebaseUser.uid,
-                    email: firebaseUser.email || '',
-                    displayName: firebaseUser.displayName || '',
-                    photoURL: firebaseUser.photoURL || undefined,
-                });
-                profile = await getUserProfile(firebaseUser.uid);
-            }
-
-            setUser(profile);
-        } catch (error: any) {
-            console.error('Error fetching user profile:', error);
-
-            // If Firestore is blocked or offline, create a temporary user profile from Firebase Auth
-            if (error?.code === 'unavailable' || error?.message?.includes('offline') || error?.message?.includes('blocked')) {
-                console.warn('Firestore unavailable, using Firebase Auth data');
-                const tempProfile: any = {
-                    uid: firebaseUser.uid,
-                    email: firebaseUser.email || '',
-                    displayName: firebaseUser.displayName || '',
-                    photoURL: firebaseUser.photoURL || undefined,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                };
-                setUser(tempProfile);
-            } else {
-                setUser(null);
-            }
+            const loggedInUser = await verixAuth.login(username, password);
+            setUser({ ...loggedInUser, uid: loggedInUser.id, createdAt: loggedInUser.createdAt, updatedAt: loggedInUser.lastLogin });
+        } catch (error) {
+            console.error('[VerixRichon] Login error:', error);
+            throw error;
         }
     };
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-            if (firebaseUser) {
-                await refreshUserProfile(firebaseUser);
-            } else {
-                setUser(null);
-            }
-            setLoading(false);
-        });
-
-        return () => unsubscribe();
-    }, []);
-
-    const signInWithGoogle = async () => {
+    const signUp = async (
+        username: string,
+        password: string,
+        displayName: string,
+        email?: string
+    ) => {
         try {
-            const provider = new GoogleAuthProvider();
-            const result = await signInWithPopup(auth, provider);
-            await refreshUserProfile(result.user);
+            const newUser = await verixAuth.register(username, password, displayName, email);
+            setUser({ ...newUser, uid: newUser.id, createdAt: newUser.createdAt, updatedAt: newUser.lastLogin });
         } catch (error) {
-            console.error('Error signing in with Google:', error);
+            console.error('[VerixRichon] Registration error:', error);
             throw error;
         }
+    };
+
+    const signInAsGuest = async () => {
+        try {
+            const guestUser = await verixAuth.loginAsGuest();
+            setUser({ ...guestUser, uid: guestUser.id, createdAt: guestUser.createdAt, updatedAt: guestUser.lastLogin });
+        } catch (error) {
+            console.error('[VerixRichon] Guest login error:', error);
+            throw error;
+        }
+    };
+
+    // Deprecated: For backward compatibility with Firebase
+    const signInAnonymously = async () => {
+        console.warn('[VerixRichon] signInAnonymously is deprecated, using signInAsGuest instead');
+        await signInAsGuest();
     };
 
     const signOut = async () => {
+        verixAuth.logout();
+        setUser(null);
+    };
+
+    const updateUserProfile = async (updates: Partial<VerixUser>) => {
         try {
-            await firebaseSignOut(auth);
-            setUser(null);
+            const updatedUser = await verixAuth.updateProfile(updates);
+            setUser({ ...updatedUser, uid: updatedUser.id, createdAt: updatedUser.createdAt, updatedAt: updatedUser.lastLogin });
         } catch (error) {
-            console.error('Error signing out:', error);
+            console.error('[VerixRichon] Profile update error:', error);
             throw error;
+        }
+    };
+
+    const refreshUserProfile = async () => {
+        const currentUser = verixAuth.getCurrentUser();
+        if (currentUser) {
+            setUser({ ...currentUser, uid: currentUser.id, createdAt: currentUser.createdAt, updatedAt: currentUser.lastLogin });
         }
     };
 
     const value: AuthContextType = {
         user,
         loading,
-        signInWithGoogle,
-        signInAnonymously: async () => {
-            try {
-                const { signInAnonymously: firebaseSignInAnonymously } = await import('firebase/auth');
-                const result = await firebaseSignInAnonymously(auth);
-                await refreshUserProfile(result.user);
-            } catch (error) {
-                console.error('Error signing in anonymously:', error);
-                throw error;
-            }
-        },
+        signIn,
+        signUp,
+        signInAsGuest,
+        signInAnonymously, // Deprecated, redirects to signInAsGuest
         signOut,
-        refreshUserProfile: async () => {
-            if (auth.currentUser) {
-                await refreshUserProfile(auth.currentUser);
-            }
-        },
+        updateUserProfile,
+        refreshUserProfile,
     };
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
+    );
 }
 
 export function useAuth() {
@@ -121,3 +144,12 @@ export function useAuth() {
     }
     return context;
 }
+
+/*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    🌀 VERIXRICHON SOFTWARE FACTORY 🌀
+    Auth Context - No Firebase Required
+    Free, Secure, Self-Hosted
+    Verix × Richon
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*/

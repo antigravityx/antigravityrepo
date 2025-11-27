@@ -22,8 +22,12 @@ export default function GoogleSignInButton({
         try {
             setLoading(true);
             setError(null);
-            await signInWithGoogle();
-            if (onSuccess) onSuccess();
+            if (signInWithGoogle) {
+                await signInWithGoogle();
+                if (onSuccess) onSuccess();
+            } else {
+                console.warn('Google Sign In not implemented in VerixAuth');
+            }
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Error al iniciar sesión';
             setError(errorMessage);

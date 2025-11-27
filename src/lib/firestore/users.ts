@@ -113,7 +113,7 @@ export async function isProfileComplete(uid: string): Promise<boolean> {
 /**
  * Check if user profile is complete (Synchronous)
  */
-export function isProfileCompleteSync(profile: UserProfile | null): boolean {
+export function isProfileCompleteSync(profile: any): boolean {
     if (!profile) return false;
 
     return !!(

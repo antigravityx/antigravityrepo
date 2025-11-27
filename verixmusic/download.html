@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VerixMusic - Download</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+
+        .security-badge {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .security-badge.verifying {
+            background: rgba(255, 255, 0, 0.1);
+            border-color: rgba(255, 255, 0, 0.3);
+        }
+
+        .security-badge.error {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: rgba(255, 0, 0, 0.3);
+        }
+
+        .badge-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .badge-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .badge-text {
+            font-size: 12px;
+            opacity: 0.7;
+            line-height: 1.5;
+        }
+
+        .download-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .download-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .download-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .info {
+            margin-top: 30px;
+            font-size: 12px;
+            opacity: 0.6;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">VERIXMUSIC</div>
+
+        <div class="security-badge verifying" id="securityBadge">
+            <div class="badge-icon" id="badgeIcon">🔍</div>
+            <div class="badge-title" id="badgeTitle">Verificando seguridad...</div>
+            <div class="badge-text" id="badgeText">
+                AntiGravity AI está verificando que el instalador sea seguro
+            </div>
+        </div>
+
+        <div id="downloadSection" class="hidden">
+            <button class="download-btn" id="downloadBtn" disabled>
+                <span id="downloadText">Preparando descarga...</span>
+            </button>
+        </div>
+
+        <div class="info">
+            <strong>Verificación de Seguridad VerixRichon</strong><br>
+            Cada instalador es analizado por AntiGravity AI antes de estar disponible.<br>
+            Sin malware • Sin tracking • Código abierto<br><br>
+            <span id="scanInfo"></span>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://YOUR_VERCEL_URL/api/security'; // Cambiar por tu URL
+        let platform = 'unknown';
+        let verified = false;
+
+        // Detectar plataforma
+        function detectPlatform() {
+            const ua = navigator.userAgent.toLowerCase();
+            if (/windows/i.test(ua)) return 'windows';
+            if (/android/i.test(ua)) return 'android';
+            return 'unknown';
+        }
+
+        // Verificar seguridad
+        async function verifySecurity() {
+            platform = detectPlatform();
+
+            try {
+                const response = await fetch(`${API_URL}?action=verify&platform=${platform}&version=2.0.0`);
+                const data = await response.json();
+
+                if (data.verified) {
+                    // Verificación exitosa
+                    document.getElementById('securityBadge').className = 'security-badge';
+                    document.getElementById('badgeIcon').textContent = '✅';
+                    document.getElementById('badgeTitle').textContent = 'Verificado por AntiGravity AI';
+                    document.getElementById('badgeText').textContent = data.message;
+
+                    // Mostrar info del scan
+                    document.getElementById('scanInfo').innerHTML = `
+                        Último análisis: ${new Date(data.scan.timestamp).toLocaleDateString()}<br>
+                        Estado: ${data.scan.status}<br>
+                        Certificado: ${data.scan.certificate_id}
+                    `;
+
+                    // Habilitar descarga
+                    verified = true;
+                    showDownloadButton();
+
+                } else {
+                    // Verificación fallida
+                    document.getElementById('securityBadge').className = 'security-badge error';
+                    document.getElementById('badgeIcon').textContent = '⚠️';
+                    document.getElementById('badgeTitle').textContent = 'Verificación pendiente';
+                    document.getElementById('badgeText').textContent = data.message;
+                }
+
+            } catch (error) {
+                // Error en verificación
+                document.getElementById('securityBadge').className = 'security-badge error';
+                document.getElementById('badgeIcon').textContent = '❌';
+                document.getElementById('badgeTitle').textContent = 'Error de verificación';
+                document.getElementById('badgeText').textContent = 'No se pudo conectar con el servicio de seguridad';
+            }
+        }
+
+        // Mostrar botón de descarga
+        function showDownloadButton() {
+            const downloadSection = document.getElementById('downloadSection');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const downloadText = document.getElementById('downloadText');
+
+            downloadSection.classList.remove('hidden');
+            downloadBtn.disabled = false;
+
+            if (platform === 'windows') {
+                downloadText.textContent = 'Descargar para Windows';
+                downloadBtn.onclick = () => downloadInstaller('windows');
+            } else if (platform === 'android') {
+                downloadText.textContent = 'Descargar APK';
+                downloadBtn.onclick = () => downloadInstaller('android');
+            } else {
+                downloadText.textContent = 'Descargar';
+                downloadBtn.onclick = () => downloadInstaller('web');
+            }
+        }
+
+        // Descargar instalador
+        async function downloadInstaller(platform) {
+            if (!verified) {
+                alert('Por favor espera la verificación de seguridad');
+                return;
+            }
+
+            // Trackear descarga
+            try {
+                const country = await getCountry();
+                const language = navigator.language || 'en';
+
+                await fetch(`${API_URL}?action=download&platform=${platform}&country=${country}&language=${language}`);
+            } catch (error) {
+                console.log('Error tracking download:', error);
+            }
+
+            // Iniciar descarga
+            const files = {
+                'windows': 'verixmusic-setup.exe',
+                'android': 'verixmusic.apk',
+                'web': 'index.html'
+            };
+
+            const filename = files[platform] || 'index.html';
+            window.location.href = filename;
+        }
+
+        // Obtener país del usuario
+        async function getCountry() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                return data.country_code || 'XX';
+            } catch {
+                return 'XX';
+            }
+        }
+
+        // Iniciar verificación al cargar
+        verifySecurity();
+    </script>
+</body>
+
+</html>
+
+<!--
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    🌀 VERIXRICHON SOFTWARE FACTORY 🌀
+    VerixMusic Download Page
+    Con verificación de seguridad
+    Verix × Richon
+    Proyecto Amistad 2025
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-->

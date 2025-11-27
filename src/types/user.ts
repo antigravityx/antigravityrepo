@@ -16,8 +16,8 @@ export interface UserProfile {
             lng: number;
         };
     };
-    createdAt: Timestamp;
-    updatedAt: Timestamp;
+    createdAt: any;
+    updatedAt: any;
 }
 
 export interface AuthContextType {

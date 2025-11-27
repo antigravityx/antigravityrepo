@@ -104,12 +104,6 @@ const Profile = () => {
             <ListItemButton component={Link} href="/auth/register">
               <ListItemText primary="Mi Perfil" />
             </ListItemButton>
-            <ListItemButton component="a" href="#">
-              <ListItemText primary="Mi Cuenta" />
-            </ListItemButton>
-            <ListItemButton component="a" href="#">
-              <ListItemText primary="Cambiar Contraseña" />
-            </ListItemButton>
           </List>
         </Box>
 

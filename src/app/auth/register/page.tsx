@@ -1,162 +1,274 @@
 'use client';
 
+// VerixRichon Registration Page
+// Firmado por: VerixRichon Software Factory
+
 export const dynamic = 'force-dynamic';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Box, Card, CardContent, Typography, Container, Stack, TextField, Button, Alert, Divider } from '@mui/material';
+import {
+    Box,
+    Card,
+    CardContent,
+    Typography,
+    Container,
+    Stack,
+    TextField,
+    Button,
+    Alert,
+    Divider,
+} from '@mui/material';
 import { useAuth } from '@/contexts/AuthContext';
-import { updateUserProfile, isProfileCompleteSync } from '@/lib/firestore/users';
-import AddressInput from '@/components/maps/AddressInput';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
-import { IconUser } from '@tabler/icons-react';
+import { IconUserPlus, IconLogin } from '@tabler/icons-react';
 
 export default function RegisterPage() {
-    const { user, loading, signInAnonymously, refreshUserProfile } = useAuth();
+    const { user, loading, signUp } = useAuth();
     const router = useRouter();
 
     const [formData, setFormData] = useState({
+        username: '',
+        password: '',
+        confirmPassword: '',
         displayName: '',
-        shippingAddress: {
-            street: '',
-            city: '',
-            state: '',
-            country: 'Argentina',
-            postalCode: '',
-            coordinates: undefined as { lat: number; lng: number } | undefined,
-        },
+        email: '',
     });
 
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Pre-fill form if user is already logged in
     useEffect(() => {
-        if (user) {
-            setFormData(prev => ({
-                ...prev,
-                displayName: user.displayName || prev.displayName,
-                shippingAddress: user.shippingAddress ? { ...prev.shippingAddress, ...user.shippingAddress } : prev.shippingAddress,
-            }));
-
-            // If profile is already complete, redirect to dashboard
-            if (isProfileCompleteSync(user)) {
-                router.push('/');
-            }
+        if (!loading && user) {
+            router.push('/');
         }
-    }, [user, router]);
+    }, [user, loading, router]);
 
-    const onRegisterClick = async (e: React.FormEvent) => {
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
 
         // Validation
+        if (!formData.username.trim()) {
+            setError('Por favor ingresa un nombre de usuario');
+            return;
+        }
         if (!formData.displayName.trim()) {
             setError('Por favor ingresa tu nombre o alias');
             return;
         }
-        if (!formData.shippingAddress.street.trim() ||
-            !formData.shippingAddress.city.trim() ||
-            !formData.shippingAddress.state.trim() ||
-            !formData.shippingAddress.country.trim()) {
-            setError('Por favor completa todos los campos de dirección');
+        if (formData.password.length < 6) {
+            setError('La contraseña debe tener al menos 6 caracteres');
             return;
         }
-        if (!formData.shippingAddress.coordinates) {
-            setError('Por favor usa el botón GPS para obtener tu ubicación exacta');
+        if (formData.password !== formData.confirmPassword) {
+            setError('Las contraseñas no coinciden');
             return;
         }
 
         setSubmitting(true);
 
         try {
-            // 1. Auth (if not logged in)
-            let currentUser = user;
-            if (!currentUser) {
-                await signInAnonymously();
-                // Note: signInAnonymously in context calls refreshUserProfile, so user state should update eventually.
-                // But we need to wait for the context to update or just proceed if we trust the flow.
-                // Ideally we would wait for 'user' to change in a useEffect, but for simplicity in this "Fusion" flow:
-                // We will rely on the fact that if signInAnonymously succeeds, we are logged in.
-                // However, we need the UID to save data.
-                // Let's use a flag to trigger saving data after user update.
-                setIsReadyToSave(true);
-            } else {
-                setIsReadyToSave(true);
-            }
+            await signUp!(
+                formData.username,
+                formData.password,
+                formData.displayName,
+                formData.email || undefined
+            );
+            router.push('/');
         } catch (err: any) {
-            console.error(err);
-            setError('No se pudo iniciar sesión como invitado.');
+            setError(err.message || 'Error al registrarse');
+        } finally {
             setSubmitting(false);
         }
     };
 
-    // Logic to handle saving data after auth
-    const [isReadyToSave, setIsReadyToSave] = useState(false);
+    if (loading) {
+        return null;
+    }
 
-    useEffect(() => {
-        const saveData = async () => {
-            if (isReadyToSave && user) {
-                try {
-                    await updateUserProfile(user.uid, {
-                        displayName: formData.displayName,
-                        shippingAddress: formData.shippingAddress,
-                    });
-                    await refreshUserProfile(); // Refresh to ensure strict gating lets us through
-                    router.push('/');
-                } catch (err) {
-                    console.error(err);
-                    setError('Error al guardar los datos. Intenta nuevamente.');
-                    setSubmitting(false);
-                    setIsReadyToSave(false);
-                }
-            }
-        };
-        saveData();
-    }, [user, isReadyToSave, formData, refreshUserProfile, router]);
-
-    if (loading) return null;
+    if (user) {
+        return null;
+    }
 
     return (
-        <PageContainer title="Registro" description="Registro de usuario">
-            <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#111', py: 4 }}>
-                <Container maxWidth="md">
-                    <Card elevation={10} sx={{ borderRadius: 4, bgcolor: '#222', color: '#fff' }}>
+        <PageContainer title="Registro" description="Crea tu cuenta VerixRichon">
+            <Box
+                sx={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                    py: 4,
+                }}
+            >
+                <Container maxWidth="sm">
+                    <Card
+                        elevation={10}
+                        sx={{
+                            borderRadius: 4,
+                            background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(22, 33, 62, 0.9) 100%)',
+                            backdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                        }}
+                    >
                         <CardContent sx={{ p: 4 }}>
                             <Stack spacing={3}>
-                                <Typography variant="h4" fontWeight="700" textAlign="center" gutterBottom>
-                                    {user ? 'Completa tus Datos' : 'Únete a la Revolución'}
-                                </Typography>
-                                <Typography variant="body1" textAlign="center" sx={{ mb: 2, color: 'text.secondary' }}>
-                                    {user
-                                        ? 'Necesitamos tu dirección para enviarte los productos.'
-                                        : 'Completa el formulario y entra como invitado en un solo paso.'}
-                                </Typography>
+                                {/* Header */}
+                                <Box textAlign="center">
+                                    <Typography
+                                        variant="h3"
+                                        fontWeight="700"
+                                        sx={{ color: '#fff', mb: 1 }}
+                                    >
+                                        Crear Cuenta
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
+                                    >
+                                        Únete a VerixRichon
+                                    </Typography>
+                                </Box>
 
-                                {error && <Alert severity="error" onClose={() => setError(null)}>{error}</Alert>}
+                                {error && (
+                                    <Alert severity="error" onClose={() => setError(null)}>
+                                        {error}
+                                    </Alert>
+                                )}
 
-                                <form onSubmit={onRegisterClick}>
-                                    <Stack spacing={3}>
+                                {/* Registration Form */}
+                                <form onSubmit={handleRegister}>
+                                    <Stack spacing={2}>
                                         <TextField
-                                            label="Nombre o Alias"
-                                            value={formData.displayName}
-                                            onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
-                                            required
                                             fullWidth
-                                            placeholder="Ej: CyberPunk2077"
+                                            label="Usuario"
+                                            value={formData.username}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, username: e.target.value })
+                                            }
+                                            required
+                                            placeholder="usuario123"
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    color: '#fff',
+                                                    '& fieldset': {
+                                                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                                                    },
+                                                },
+                                                '& .MuiInputLabel-root': {
+                                                    color: 'rgba(255, 255, 255, 0.7)',
+                                                },
+                                            }}
                                         />
 
-                                        <Box sx={{ border: '1px solid #333', borderRadius: 2, p: 2 }}>
-                                            <Typography variant="h6" gutterBottom sx={{ color: 'primary.main' }}>
-                                                📍 Dirección de Envío (Obligatorio)
-                                            </Typography>
-                                            <AddressInput
-                                                value={formData.shippingAddress}
-                                                onChange={(address) => setFormData({ ...formData, shippingAddress: address })}
-                                            />
-                                        </Box>
+                                        <TextField
+                                            fullWidth
+                                            label="Nombre o Alias"
+                                            value={formData.displayName}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, displayName: e.target.value })
+                                            }
+                                            required
+                                            placeholder="Tu Nombre"
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    color: '#fff',
+                                                    '& fieldset': {
+                                                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                                                    },
+                                                },
+                                                '& .MuiInputLabel-root': {
+                                                    color: 'rgba(255, 255, 255, 0.7)',
+                                                },
+                                            }}
+                                        />
 
-                                        <Divider sx={{ my: 2, borderColor: '#333' }} />
+                                        <TextField
+                                            fullWidth
+                                            type="email"
+                                            label="Email (Opcional)"
+                                            value={formData.email}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, email: e.target.value })
+                                            }
+                                            placeholder="tu@email.com"
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    color: '#fff',
+                                                    '& fieldset': {
+                                                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                                                    },
+                                                },
+                                                '& .MuiInputLabel-root': {
+                                                    color: 'rgba(255, 255, 255, 0.7)',
+                                                },
+                                            }}
+                                        />
+
+                                        <TextField
+                                            fullWidth
+                                            type="password"
+                                            label="Contraseña"
+                                            value={formData.password}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, password: e.target.value })
+                                            }
+                                            required
+                                            helperText="Mínimo 6 caracteres"
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    color: '#fff',
+                                                    '& fieldset': {
+                                                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                                                    },
+                                                },
+                                                '& .MuiInputLabel-root': {
+                                                    color: 'rgba(255, 255, 255, 0.7)',
+                                                },
+                                                '& .MuiFormHelperText-root': {
+                                                    color: 'rgba(255, 255, 255, 0.5)',
+                                                },
+                                            }}
+                                        />
+
+                                        <TextField
+                                            fullWidth
+                                            type="password"
+                                            label="Confirmar Contraseña"
+                                            value={formData.confirmPassword}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, confirmPassword: e.target.value })
+                                            }
+                                            required
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    color: '#fff',
+                                                    '& fieldset': {
+                                                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                                                    },
+                                                },
+                                                '& .MuiInputLabel-root': {
+                                                    color: 'rgba(255, 255, 255, 0.7)',
+                                                },
+                                            }}
+                                        />
 
                                         <Button
                                             type="submit"
@@ -164,31 +276,58 @@ export default function RegisterPage() {
                                             size="large"
                                             fullWidth
                                             disabled={submitting}
-                                            startIcon={!user ? <IconUser /> : null}
+                                            startIcon={<IconUserPlus />}
                                             sx={{
-                                                py: 2,
-                                                fontSize: '1.1rem',
-                                                bgcolor: user ? 'primary.main' : '#000', // Black for Guest
-                                                color: '#fff',
+                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                fontWeight: 600,
+                                                py: 1.5,
+                                                mt: 2,
                                                 '&:hover': {
-                                                    bgcolor: user ? 'primary.dark' : '#333'
+                                                    background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
                                                 },
                                             }}
                                         >
-                                            {submitting
-                                                ? 'Procesando...'
-                                                : user
-                                                    ? 'GUARDAR DATOS Y CONTINUAR'
-                                                    : 'GUARDAR Y ENTRAR'}
+                                            {submitting ? 'Registrando...' : 'Crear Cuenta'}
                                         </Button>
-
-                                        {!user && (
-                                            <Typography variant="caption" textAlign="center" color="text.secondary">
-                                                Entrarás como invitado. Tus datos se guardarán en este dispositivo.
-                                            </Typography>
-                                        )}
                                     </Stack>
                                 </form>
+
+                                <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}>
+                                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                                        o
+                                    </Typography>
+                                </Divider>
+
+                                {/* Login Link */}
+                                <Box textAlign="center">
+                                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                                        ¿Ya tienes cuenta?{' '}
+                                        <Button
+                                            variant="text"
+                                            onClick={() => router.push('/auth/login')}
+                                            startIcon={<IconLogin size={18} />}
+                                            sx={{
+                                                color: '#00d4ff',
+                                                fontWeight: 600,
+                                                textTransform: 'none',
+                                                '&:hover': {
+                                                    background: 'rgba(0, 212, 255, 0.1)',
+                                                },
+                                            }}
+                                        >
+                                            Inicia Sesión
+                                        </Button>
+                                    </Typography>
+                                </Box>
+
+                                {/* Footer */}
+                                <Typography
+                                    variant="caption"
+                                    textAlign="center"
+                                    sx={{ mt: 2, color: 'rgba(255, 255, 255, 0.5)' }}
+                                >
+                                    🌀 VerixRichon Software Factory
+                                </Typography>
                             </Stack>
                         </CardContent>
                     </Card>
@@ -197,3 +336,11 @@ export default function RegisterPage() {
         </PageContainer>
     );
 }
+
+/*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    🌀 VERIXRICHON SOFTWARE FACTORY 🌀
+    Registration Page - No Firebase Required
+    Verix × Richon
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*/

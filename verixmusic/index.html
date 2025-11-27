@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VerixMusic</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 80px;
+            /* Space for player */
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Status Indicator */
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .status-online {
+            background: rgba(0, 255, 0, 0.1);
+            color: #0f0;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+
+        .status-offline {
+            background: rgba(255, 0, 0, 0.1);
+            color: #f00;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+        }
+
+        /* Logo con emoji sutil */
+        .logo {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 40px;
+            letter-spacing: 3px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        /* Guía visual con número */
+        .step-indicator {
+            font-size: 11px;
+            opacity: 0.4;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        /* Track con emoji que guía */
+        .track {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 18px 20px;
+            margin: 12px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .track:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(3px);
+        }
+
+        /* Emoji que indica acción */
+        .track-emoji {
+            font-size: 24px;
+            flex-shrink: 0;
+            filter: grayscale(0.3);
+            transition: all 0.3s;
+        }
+
+        .track:hover .track-emoji {
+            filter: grayscale(0);
+            transform: scale(1.1);
+        }
+
+        .track-info {
+            flex: 1;
+        }
+
+        .track-title {
+            font-size: 15px;
+            margin-bottom: 3px;
+            font-weight: 400;
+        }
+
+        .track-artist {
+            font-size: 11px;
+            opacity: 0.5;
+        }
+
+        /* Indicador de "play" */
+        .track-play-icon {
+            font-size: 16px;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .track:hover .track-play-icon {
+            opacity: 0.8;
+        }
+
+        /* Player Bar (Glassmorphism) */
+        .player-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            /* Hidden initially */
+            width: 90%;
+            max-width: 380px;
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+        }
+
+        .player-bar.visible {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .player-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .np-title {
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .np-artist {
+            font-size: 10px;
+            opacity: 0.6;
+        }
+
+        .player-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ctrl-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .ctrl-btn:hover {
+            opacity: 1;
+        }
+
+        /* Sección de instalación */
+        .install-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .install-hint {
+            text-align: center;
+            font-size: 11px;
+            opacity: 0.3;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .install-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 14px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 8px auto;
+            max-width: 220px;
+        }
+
+        .install-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .track {
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .track:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .track:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .track:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Status Indicator -->
+        <div id="connection-status" class="status-badge status-online">☁️ ONLINE</div>
+
+        <!-- Logo -->
+        <div class="logo">🎵 VERIXMUSIC</div>
+
+        <!-- Step 1 -->
+        <div class="step-indicator">① ELIGE TU VIBE</div>
+
+        <!-- Playlist -->
+        <div id="playlist"></div>
+
+        <!-- Install Section -->
+        <div class="install-section">
+            <div class="install-hint">② LLÉVALO CONTIGO</div>
+
+            <a href="#" class="install-btn hidden" id="installAndroid" download>
+                <span class="install-emoji">📱</span>
+                <span id="installAndroidText">Descargar APK</span>
+            </a>
+
+            <a href="#" class="install-btn hidden" id="installWindows" download>
+                <span class="install-emoji">💻</span>
+                <span id="installWindowsText">Descargar Windows</span>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer"
+            style="margin-top: 50px; text-align: center; font-size: 10px; opacity: 0.2; letter-spacing: 2px;">
+            VERIXRICHON</div>
+    </div>
+
+    <!-- Player Bar -->
+    <div id="player-bar" class="player-bar">
+        <div class="player-info">
+            <div id="np-title" class="np-title">Select a track</div>
+            <div id="np-artist" class="np-artist">VerixMusic</div>
+        </div>
+        <div class="player-controls">
+            <button class="ctrl-btn"
+                onclick="verixPlayer.audio.paused ? verixPlayer.audio.play() : verixPlayer.audio.pause()">⏯</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/verix-player.js"></script>
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered:', reg))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+
+        // Playlist Data (Using demo MP3s for "Cloud" simulation)
+        const playlist = [
+            {
+                title: "With That",
+                artist: "Young Thug ft. Duke",
+                url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Demo URL
+                emoji: "🔥"
+            },
+            {
+                title: "Best Friend",
+                artist: "Young Thug ft. Future",
+                url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", // Demo URL
+                emoji: "💎"
+            },
+            {
+                title: "Lifestyle",
+                artist: "Young Thug ft. Rich Homie Quan",
+                url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", // Demo URL
+                emoji: "⚡"
+            }
+        ];
+
+        // Render Playlist
+        function renderPlaylist() {
+            const playlistEl = document.getElementById('playlist');
+            playlistEl.innerHTML = '';
+
+            playlist.forEach((track) => {
+                const trackEl = document.createElement('div');
+                trackEl.className = 'track';
+                trackEl.innerHTML = `
+                    <div class="track-emoji">${track.emoji}</div>
+                    <div class="track-info">
+                        <div class="track-title">${track.title}</div>
+                        <div class="track-artist">${track.artist}</div>
+                    </div>
+                    <div class="track-play-icon">▶</div>
+                `;
+                trackEl.onclick = () => {
+                    // Visual Feedback
+                    trackEl.style.transform = 'scale(0.98)';
+                    setTimeout(() => trackEl.style.transform = '', 100);
+
+                    // Play via VerixPlayer
+                    verixPlayer.play(track);
+                };
+                playlistEl.appendChild(trackEl);
+            });
+        }
+
+        // Device Detection & Init (Simplified from previous version)
+        function init() {
+            renderPlaylist();
+            // ... (Keep existing install button logic if needed, simplified here for brevity)
+            const ua = navigator.userAgent.toLowerCase();
+            if (/android/i.test(ua)) document.getElementById('installAndroid').classList.remove('hidden');
+            else if (/windows/i.test(ua)) document.getElementById('installWindows').classList.remove('hidden');
+            else {
+                document.getElementById('installAndroid').classList.remove('hidden');
+                document.getElementById('installWindows').classList.remove('hidden');
+            }
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
